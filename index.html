@@ -18,8 +18,8 @@
     async function loadDonors() {
       try {
         const res = await fetch(
-          "https://data.pdc.wa.gov/resource/9rrz-7mfc.json?filer_id=37193&$limit=5&$order=receipt_date DESC"
-        );
+  "https://corsproxy.io/?https://data.pdc.wa.gov/resource/9rrz-7mfc.json?filer_id=37193&$limit=5&$order=receipt_date DESC"
+);
         const data = await res.json();
         const container = document.getElementById("donations");
         if (!data || data.length === 0) {
