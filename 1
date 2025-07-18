@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fundraising Widget</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1rem; }
+    #donations ul { list-style: none; padding: 0; }
+    #donations li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div id="donations">
+    <p>Loading fundraising data…</p>
+  </div>
+  <script>
+    async function loadDonors() {
+      try {
+        const res = await fetch(
+          "https://data.pdc.wa.gov/resource/9rrz-7mfc.json?filer_id=37193&$limit=5&$order=receipt_date DESC"
+        );
+        const data = await res.json();
+        const container = document.getElementById("donations");
+        if (!data || data.length === 0) {
+          container.innerHTML = "<p>No recent donor data found.</p>";
+          return;
+        }
+
+        let total = 0;
+        let html = "<h2>Recent Donors</h2><ul>";
+        data.forEach(d => {
+          const amount = parseFloat(d.amount || 0);
+          total += amount;
+          const date = new Date(d.receipt_date).toLocaleDateString();
+          html += `<li><strong>${d.contributor_name}</strong>: $${amount.toFixed(2)} – ${date}</li>`;
+        });
+        html += "</ul>";
+        html = `<h2>Fundraising Overview</h2>
+                <p><strong>$${total.toLocaleString()}</strong> from last 5 contributions</p>` + html;
+        container.innerHTML = html;
+      } catch (err) {
+        document.getElementById("donations").textContent =
+          "Error loading donor data.";
+        console.error(err);
+      }
+    }
+    loadDonors();
+  </script>
+</body>
+</html>
